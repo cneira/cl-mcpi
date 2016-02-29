@@ -32,12 +32,13 @@
 
 (defun send-command (cmd host port)
   (usocket:with-client-socket (usocket:socket stream host port )
+    (format t "sending ~a" cmd)
     (format stream  "~A~C" cmd #\Newline)
     (force-output stream)
     (read-line stream nil) ))
 
 
-(defmacro send-to-mcpi (cmd )  
+(defmacro send-to-mcpi (cmd )
   ` (progn
       (format t "~a~%" ,cmd)
       (send-command ,cmd *pi-host* 4711) ) )
@@ -68,20 +69,14 @@
 ;COMMANDS
 ;-- World --
 ;world.getBlock(x,y,z) --> blockTypeId
-(add-mpci-call  world.getBlock  ( x y z ) )
-
 ;;world.setBlock(x,y,z,blockTypeId)
 ;; block types ids from here http://minecraft.gamepedia.com/Data_values_(Pocket_Edition)
-(add-mpci-call  world.setBlock  ( x y z blockTypeId ) )
-
  ;;world.setBlock(x,y,z,blockTypeId,blockData)
-(add-mpci-call  world.setBlock  ( x y z blockTypeId blockData ) )
-
 ;;world.setBlocks(x1,y1,z1,x2,y2,z2,blockTypeId)
-(add-mpci-call  world.setBlocks  ( x1 y1 z1 x2 y2 z2 blockTypeId ) )
-
 ;;world.setBlocks(x1,y1,z1,x2,y2,z2,blockTypeId,blockData)
-(add-mpci-call  world.setBlocks  ( x1 y1 z1 x2 y2 z2 blockTypeId blockData ) )
+
+(defun world.getBlock (&rest vals)
+   (send-to-mcpi (format nil "world.getBlock( ~{~a~^, ~}) " vals )))
 
 ;;world.getHeight(x,z) --> Integer
 (add-mpci-call  world.getHeight  ( x  z ) )
