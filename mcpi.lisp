@@ -69,14 +69,19 @@
 ;COMMANDS
 ;-- World --
 ;world.getBlock(x,y,z) --> blockTypeId
+
+(add-mpci-call  world.getBlock  ( x y z ) )
+
 ;;world.setBlock(x,y,z,blockTypeId)
 ;; block types ids from here http://minecraft.gamepedia.com/Data_values_(Pocket_Edition)
- ;;world.setBlock(x,y,z,blockTypeId,blockData)
+;;world.setBlock(x,y,z,blockTypeId,blockData)
+(add-mpci-call  world.setBlock  ( x y z  blockTypeId blockData ) )
+
 ;;world.setBlocks(x1,y1,z1,x2,y2,z2,blockTypeId)
 ;;world.setBlocks(x1,y1,z1,x2,y2,z2,blockTypeId,blockData)
+(defun world.setBlocks (&rest vals)
+   (send-to-mcpi (format nil "world.setBlock( ~{~a~^, ~}) " vals )))
 
-(defun world.getBlock (&rest vals)
-   (send-to-mcpi (format nil "world.getBlock( ~{~a~^, ~}) " vals )))
 
 ;;world.getHeight(x,z) --> Integer
 (add-mpci-call  world.getHeight  ( x  z ) )
@@ -133,3 +138,4 @@
 ;; a lava block is 10 dec
 (world.setBlock -68  0 50 10 )
 (chat.post "Hello")
+
